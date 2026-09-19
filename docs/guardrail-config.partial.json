@@ -1,0 +1,31 @@
+{
+  "_note": "PARTIAL EXPORT — the AWS Workshop Studio sandbox expired before the full `aws bedrock get-guardrail` output could be captured. This is the portion that was saved. See GUARDRAIL.md in this same folder for the complete, documented configuration of all four guardrail layers.",
+  "name": "AskIT-Guardrail",
+  "description": "Custom safety guardrail for the AskIT federal IT support assistant",
+  "guardrailId": "p1fiz8mn88d6",
+  "guardrailArn": "arn:aws:bedrock:us-east-1:984791917088:guardrail/p1fiz8mn88d6",
+  "version": "DRAFT",
+  "status": "READY",
+  "topicPolicy": {
+    "topics": [
+      {
+        "name": "Legal Advice",
+        "definition": "Requests for legal opinions, guidance on legal proceedings, lawsuits, union grievances, or any form of legal counsel.",
+        "examples": [
+          "What are my legal rights regarding data access?",
+          "Can I sue the agency for this IT issue?",
+          "Should I file a grievance with the union?",
+          "Is it legal for my supervisor to monitor my email?"
+        ],
+        "type": "DENY",
+        "inputAction": "BLOCK",
+        "outputAction": "BLOCK",
+        "inputEnabled": true,
+        "outputEnabled": true
+      },
+      {
+        "name": "Budget and Procurement"
+      }
+    ]
+  }
+}
