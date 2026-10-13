@@ -8,6 +8,7 @@ from strands.models.bedrock import BedrockModel
 from strands.tools.mcp import MCPClient
 from strands_tools import retrieve
 from mcp_proxy_for_aws.client import aws_iam_streamablehttp_client
+from askit_hooks import RequireRetrievalHook
 
 # --- Initialize the AgentCore application ---
 app = BedrockAgentCoreApp()
@@ -58,10 +59,12 @@ Guidelines:
 
 # --- Create the agent ---
 # Tools: retrieve (Knowledge Base), gateway_mcp (CreateTicket, GetTicketStatus via MCP)
+# Hooks: RequireRetrievalHook enforces "retrieve before answering a policy question" in code
 agent = Agent(
     model=model,
     system_prompt=SYSTEM_PROMPT,
-    tools=[retrieve, gateway_mcp]
+    tools=[retrieve, gateway_mcp],
+    hooks=[RequireRetrievalHook()]
 )
 
 # --- AgentCore Runtime entrypoint ---

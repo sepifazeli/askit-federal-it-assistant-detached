@@ -34,6 +34,32 @@ covering content filtering, three denied topics (legal advice, budget/
 procurement, HR/personnel), word filtering, and PII masking, plus the specific
 test cases used to validate each layer actually fires.
 
+## Enforcing retrieval in code
+
+The system prompt tells the agent to search the Knowledge Base before answering a
+policy question, but a prompt is an instruction, not a guarantee.
+[`askit_hooks.py`](./askit_hooks.py) adds `RequireRetrievalHook`, a Strands hook that
+enforces it:
+
+1. It notes whether the user's message looks like a policy question (VPN, MFA,
+   passwords, acceptable use, software approval, ...) and whether the `retrieve` tool
+   ran successfully during the turn.
+2. If a policy question is about to be answered without a successful `retrieve` call,
+   it discards that answer (`AfterInvocationEvent.resume`) and tells the agent to
+   retrieve first.
+3. After two failed attempts it returns a fixed fallback offering a help desk ticket,
+   instead of an answer from general knowledge.
+
+Turns that already called another tool (e.g. `CreateTicket`) are not forced to
+retrieve, so a ticket is never created twice. The policy check is a keyword heuristic
+on the new user message only, so a follow-up that names no policy topic still relies on
+the prompt. Needs `strands-agents>=1.30.0` for `AfterInvocationEvent.resume`.
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
 ## What's in this repo, and what isn't
 
 This was built in a temporary AWS Workshop Studio sandbox that auto-cleans up
